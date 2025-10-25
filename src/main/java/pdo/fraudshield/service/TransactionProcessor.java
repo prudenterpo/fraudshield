@@ -5,8 +5,13 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import pdo.fraudshield.domain.FraudAnalysis;
 import pdo.fraudshield.domain.Transaction;
+import pdo.fraudshield.math.RuleEngine;
 import pdo.fraudshield.repository.FraudAnalysisRepository;
 import pdo.fraudshield.repository.TransactionRepository;
+
+import java.math.BigDecimal;
+import java.time.LocalDateTime;
+import java.util.Map;
 
 @Slf4j
 @Service
@@ -15,10 +20,10 @@ public class TransactionProcessor {
 
     private final TransactionRepository transactionRepository;
     private final FraudAnalysisRepository fraudAnalysisRepository;
+    private final RuleEngine ruleEngine;
 
     public FraudAnalysis processTransaction(Transaction transaction) {
-        log.info("Processing transaction: {} for customer: {}",
-                transaction.getId(), transaction.getCustomerId());
+        log.info("Processing transaction: {} for customer: {}", transaction.getId(), transaction.getCustomerId());
 
         Transaction savedTransaction = transactionRepository.save(transaction);
 
@@ -29,29 +34,31 @@ public class TransactionProcessor {
     }
 
     private FraudAnalysis performBasicAnalysis(Transaction transaction) {
-        // TODO: Temporary basic logic - will be replaced with mathematical models
-        boolean isSuspicious = isTransactionSuspicious(transaction);
+        Map<String, Object> ruleResults = ruleEngine.evaluateRules(transaction);
+        int discreteRiskScore = (int) ruleResults.get("discreteRiskScore");
+
+        FraudAnalysis.FraudStatus status = determineStatus(discreteRiskScore);
 
         return FraudAnalysis.builder()
                 .transactionId(transaction.getId())
                 .customerId(transaction.getCustomerId())
-                .status(isSuspicious ?
-                        FraudAnalysis.FraudStatus.MANUAL_REVIEW :
-                        FraudAnalysis.FraudStatus.APPROVED)
-                .riskScore(isSuspicious ? java.math.BigDecimal.valueOf(75) : java.math.BigDecimal.valueOf(10))
-                .confidenceLevel(java.math.BigDecimal.valueOf(0.85))
-                .analyzedAt(java.time.LocalDateTime.now())
+                .status(status)
+                .riskScore(BigDecimal.valueOf(discreteRiskScore))
+                .confidenceLevel(calculateConfidence(ruleResults))
+                .analyzedAt(LocalDateTime.now())
                 .build();
     }
 
-    private boolean isTransactionSuspicious(Transaction transaction) {
-        //TODO: will be replaced with mathematical models
-        return transaction.getAmount().compareTo(java.math.BigDecimal.valueOf(5000)) > 0 ||
-                isNightTime(transaction.getTimestamp());
+    private FraudAnalysis.FraudStatus determineStatus(int riskScore) {
+        if (riskScore >= 90) return FraudAnalysis.FraudStatus.REJECTED;
+        if (riskScore >= 70) return FraudAnalysis.FraudStatus.MANUAL_REVIEW;
+        return FraudAnalysis.FraudStatus.APPROVED;
     }
 
-    private boolean isNightTime(java.time.LocalDateTime timestamp) {
-        int hour = timestamp.getHour();
-        return hour < 6 || hour > 22;
+    private BigDecimal calculateConfidence(Map<String, Object> ruleResults) {
+        int triggeredRules = (int) ruleResults.get("triggeredRules");
+        // More rules triggered = higher confidence in the analysis
+        double confidence = 0.7 + (triggeredRules * 0.1);
+        return BigDecimal.valueOf(Math.min(confidence, 0.95));
     }
 }
