@@ -6,8 +6,8 @@ services:
     container_name: fraudshield-db
     environment:
       POSTGRES_DB: fraudshield
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: password
+      POSTGRES_USER: fraudshield
+      POSTGRES_PASSWORD: fraudshield123
     ports:
       - "5433:5432"
     volumes:
