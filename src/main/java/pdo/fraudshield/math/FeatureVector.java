@@ -8,6 +8,7 @@ import java.util.Arrays;
 
 @Data
 public class FeatureVector {
+
     private final double[] features;
 
     private static final int AMOUNT_NORMALIZED = 0;
@@ -27,7 +28,7 @@ public class FeatureVector {
     }
 
     private void extractFeatures(Transaction transaction) {
-        features[AMOUNT_NORMALIZED] = normalizeAmount(transaction.getAmount());
+        features[AMOUNT_NORMALIZED] = sigmoidNormalizationAmount(transaction.getAmount());
 
         double hourRadians = (transaction.getTimestamp().getHour() * Math.PI) / 12;
         features[HOUR_SIN] = Math.sin(hourRadians);
@@ -40,9 +41,8 @@ public class FeatureVector {
         features[PAYMENT_METHOD_RISK] = calculatePaymentMethodRisk(transaction.getPaymentMethod());
     }
 
-    private double normalizeAmount(BigDecimal amount) {
+    private double sigmoidNormalizationAmount(BigDecimal amount) {
         double amountValue = amount.doubleValue();
-        // Sigmoid normalization: most transactions are small, few are large
         return 1.0 / (1.0 + Math.exp(-amountValue / 1000.0));
     }
 
@@ -62,7 +62,7 @@ public class FeatureVector {
 
     private double calculatePaymentMethodRisk(Transaction.PaymentMethod method) {
         return switch (method) {
-            case PIX -> 0.7;      // Higher risk - instant and irreversible
+            case PIX -> 0.7;
             case CREDIT_CARD -> 0.3;
             case DEBIT_CARD -> 0.4;
             case TRANSFER -> 0.6;

@@ -31,12 +31,33 @@ public class TransactionProcessor {
     private final ProbabilityEngine probabilityEngine;
 
     public FraudAnalysis processTransaction(Transaction transaction) {
-        log.info("Processing transaction: {} for customer: {}",
-                transaction.getId(), transaction.getCustomerId());
+        log.info("Processing transaction: {} for customer: {}", transaction.getId(), transaction.getCustomerId());
 
         Transaction savedTransaction = transactionRepository.save(transaction);
         FraudAnalysis analysis = performBasicAnalysis(savedTransaction);
         return fraudAnalysisRepository.save(analysis);
+    }
+
+    public void learnFromFeedback(UUID transactionId, boolean wasActualFraud) {
+        Optional<FraudAnalysis> analysisOpt = fraudAnalysisRepository.findByTransactionId(transactionId);
+        Optional<Transaction> transactionOpt = transactionRepository.findById(transactionId);
+
+        if (analysisOpt.isPresent() && transactionOpt.isPresent()) {
+            Transaction transaction = transactionOpt.get();
+
+            Map<String, Object> ruleResults = ruleEngine.evaluateRules(transaction);
+            int discreteRiskScore = (int) ruleResults.get("discreteRiskScore");
+            Map<String, Object> similarityResults = similarityAnalyzer.analyzeSimilarity(transaction);
+            double anomalyScore = (double) similarityResults.get("anomalyScore");
+
+            double ruleScoreNormalized = discreteRiskScore / 100.0;
+
+            Map<String, Object> optimizationResults = gradientOptimizer.optimizeWeights(
+                    ruleScoreNormalized, anomalyScore, wasActualFraud);
+
+            log.info("Learning from feedback - Transaction: {}, WasFraud: {}, ErrorReduction: {}",
+                    transactionId, wasActualFraud, optimizationResults.get("errorReduction"));
+        }
     }
 
     private FraudAnalysis performBasicAnalysis(Transaction transaction) {
@@ -100,27 +121,5 @@ public class TransactionProcessor {
         if (riskScore >= 80) return FraudAnalysis.FraudStatus.REJECTED;
         if (riskScore >= 60) return FraudAnalysis.FraudStatus.MANUAL_REVIEW;
         return FraudAnalysis.FraudStatus.APPROVED;
-    }
-
-    public void learnFromFeedback(UUID transactionId, boolean wasActualFraud) {
-        Optional<FraudAnalysis> analysisOpt = fraudAnalysisRepository.findByTransactionId(transactionId);
-        Optional<Transaction> transactionOpt = transactionRepository.findById(transactionId);
-
-        if (analysisOpt.isPresent() && transactionOpt.isPresent()) {
-            Transaction transaction = transactionOpt.get();
-
-            Map<String, Object> ruleResults = ruleEngine.evaluateRules(transaction);
-            int discreteRiskScore = (int) ruleResults.get("discreteRiskScore");
-            Map<String, Object> similarityResults = similarityAnalyzer.analyzeSimilarity(transaction);
-            double anomalyScore = (double) similarityResults.get("anomalyScore");
-
-            double ruleScoreNormalized = discreteRiskScore / 100.0;
-
-            Map<String, Object> optimizationResults = gradientOptimizer.optimizeWeights(
-                    ruleScoreNormalized, anomalyScore, wasActualFraud);
-
-            log.info("Learning from feedback - Transaction: {}, WasFraud: {}, ErrorReduction: {}",
-                    transactionId, wasActualFraud, optimizationResults.get("errorReduction"));
-        }
     }
 }

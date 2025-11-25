@@ -6,7 +6,6 @@ import pdo.fraudshield.domain.Transaction;
 import pdo.fraudshield.repository.TransactionRepository;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 @Component
 @RequiredArgsConstructor
@@ -18,7 +17,6 @@ public class SimilarityAnalyzer {
         FeatureVector currentVector = new FeatureVector(currentTransaction);
         Map<String, Object> results = new HashMap<>();
 
-        // Get recent transactions for this customer (context)
         List<Transaction> customerHistory = transactionRepository
                 .findByCustomerId(currentTransaction.getCustomerId());
 
@@ -29,9 +27,7 @@ public class SimilarityAnalyzer {
             return results;
         }
 
-        List<FeatureVector> historyVectors = customerHistory.stream()
-                .map(FeatureVector::new)
-                .toList();
+        List<FeatureVector> historyVectors = customerHistory.stream().map(FeatureVector::new).toList();
 
         double averageSimilarity = calculateAverageSimilarity(currentVector, historyVectors);
         double closestDistance = findClosestDistance(currentVector, historyVectors);
