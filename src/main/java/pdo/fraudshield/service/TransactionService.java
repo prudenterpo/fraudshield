@@ -3,12 +3,12 @@ package pdo.fraudshield.service;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-import pdo.fraudshield.domain.FraudAnalysis;
-import pdo.fraudshield.domain.Transaction;
-import pdo.fraudshield.math.GradientOptimizer;
-import pdo.fraudshield.math.ProbabilityEngine;
-import pdo.fraudshield.math.RuleEngine;
-import pdo.fraudshield.math.SimilarityAnalyzer;
+import pdo.fraudshield.entity.FraudAnalysis;
+import pdo.fraudshield.entity.Transaction;
+import pdo.fraudshield.engine.GradientOptimizer;
+import pdo.fraudshield.engine.ProbabilityEngine;
+import pdo.fraudshield.engine.RuleEngine;
+import pdo.fraudshield.engine.SimilarityAnalyzer;
 import pdo.fraudshield.repository.FraudAnalysisRepository;
 import pdo.fraudshield.repository.TransactionRepository;
 
@@ -21,7 +21,7 @@ import java.util.UUID;
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class TransactionProcessor {
+public class TransactionService {
 
     private final TransactionRepository transactionRepository;
     private final FraudAnalysisRepository fraudAnalysisRepository;

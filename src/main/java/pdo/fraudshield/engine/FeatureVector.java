@@ -1,6 +1,6 @@
-package pdo.fraudshield.math;
+package pdo.fraudshield.engine;
 
-import pdo.fraudshield.domain.Transaction;
+import pdo.fraudshield.entity.Transaction;
 import lombok.Data;
 
 import java.math.BigDecimal;

@@ -1,11 +1,11 @@
-package pdo.fraudshield.math;
+package pdo.fraudshield.engine;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import pdo.fraudshield.domain.FraudAnalysis;
-import pdo.fraudshield.domain.Transaction;
-import pdo.fraudshield.service.TransactionProcessor;
+import pdo.fraudshield.entity.FraudAnalysis;
+import pdo.fraudshield.entity.Transaction;
+import pdo.fraudshield.service.TransactionService;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -14,10 +14,10 @@ import java.util.UUID;
 import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
-class TransactionProcessorTest {
+class TransactionServiceTest {
 
     @Autowired
-    private TransactionProcessor transactionProcessor;
+    private TransactionService transactionService;
 
     @Test
     void shouldProcessAndApproveNormalTransaction() {
@@ -32,7 +32,7 @@ class TransactionProcessorTest {
                 .paymentMethod(Transaction.PaymentMethod.CREDIT_CARD)
                 .build();
 
-        FraudAnalysis analysis = transactionProcessor.processTransaction(transaction);
+        FraudAnalysis analysis = transactionService.processTransaction(transaction);
 
         assertNotNull(analysis);
         assertEquals(FraudAnalysis.FraudStatus.APPROVED, analysis.getStatus());
@@ -52,7 +52,7 @@ class TransactionProcessorTest {
                 .paymentMethod(Transaction.PaymentMethod.PIX)
                 .build();
 
-        FraudAnalysis analysis = transactionProcessor.processTransaction(transaction);
+        FraudAnalysis analysis = transactionService.processTransaction(transaction);
 
         assertNotNull(analysis);
         assertEquals(FraudAnalysis.FraudStatus.MANUAL_REVIEW, analysis.getStatus());

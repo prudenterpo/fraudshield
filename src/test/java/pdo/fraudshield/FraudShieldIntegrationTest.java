@@ -6,8 +6,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import pdo.fraudshield.api.TransactionController.TransactionRequest;
-import pdo.fraudshield.domain.Transaction;
+import pdo.fraudshield.entity.Transaction;
+import pdo.fraudshield.dto.TransactionRequest;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;

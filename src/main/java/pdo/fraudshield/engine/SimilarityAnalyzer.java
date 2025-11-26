@@ -1,8 +1,8 @@
-package pdo.fraudshield.math;
+package pdo.fraudshield.engine;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
-import pdo.fraudshield.domain.Transaction;
+import pdo.fraudshield.entity.Transaction;
 import pdo.fraudshield.repository.TransactionRepository;
 
 import java.util.*;

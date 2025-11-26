@@ -1,9 +1,9 @@
-package pdo.fraudshield.math;
+package pdo.fraudshield.engine;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import pdo.fraudshield.domain.Transaction;
+import pdo.fraudshield.entity.Transaction;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;

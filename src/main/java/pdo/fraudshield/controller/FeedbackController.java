@@ -1,9 +1,9 @@
-package pdo.fraudshield.api;
+package pdo.fraudshield.controller;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import pdo.fraudshield.service.TransactionProcessor;
+import pdo.fraudshield.service.TransactionService;
 
 import java.util.UUID;
 
@@ -12,11 +12,11 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class FeedbackController {
 
-    private final TransactionProcessor transactionProcessor;
+    private final TransactionService transactionService;
 
     @PostMapping("/fraud")
     public ResponseEntity<String> provideFraudFeedback(@RequestBody FraudFeedbackRequest request) {
-        transactionProcessor.learnFromFeedback(request.transactionId(), request.wasFraud());
+        transactionService.learnFromFeedback(request.transactionId(), request.wasFraud());
         return ResponseEntity.ok("Feedback received - model updated");
     }
 

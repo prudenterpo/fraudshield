@@ -2,11 +2,11 @@ package pdo.fraudshield.visualization;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
-import pdo.fraudshield.domain.FraudAnalysis;
-import pdo.fraudshield.domain.Transaction;
-import pdo.fraudshield.math.ProbabilityEngine;
-import pdo.fraudshield.math.RuleEngine;
-import pdo.fraudshield.math.SimilarityAnalyzer;
+import pdo.fraudshield.entity.FraudAnalysis;
+import pdo.fraudshield.entity.Transaction;
+import pdo.fraudshield.engine.ProbabilityEngine;
+import pdo.fraudshield.engine.RuleEngine;
+import pdo.fraudshield.engine.SimilarityAnalyzer;
 import pdo.fraudshield.repository.FraudAnalysisRepository;
 import pdo.fraudshield.repository.TransactionRepository;
 
@@ -14,8 +14,6 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 @Component

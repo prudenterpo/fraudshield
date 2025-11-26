@@ -1,10 +1,10 @@
-package pdo.fraudshield.api;
+package pdo.fraudshield.controller;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import pdo.fraudshield.domain.FraudAnalysis;
-import pdo.fraudshield.domain.Transaction;
+import pdo.fraudshield.entity.FraudAnalysis;
+import pdo.fraudshield.entity.Transaction;
 import pdo.fraudshield.repository.FraudAnalysisRepository;
 import pdo.fraudshield.repository.TransactionRepository;
 import pdo.fraudshield.visualization.DashboardGenerator;

@@ -1,6 +1,6 @@
 package pdo.fraudshield.repository;
 
-import pdo.fraudshield.domain.Customer;
+import pdo.fraudshield.entity.Customer;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 

@@ -1,4 +1,4 @@
-package pdo.fraudshield.domain;
+package pdo.fraudshield.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
