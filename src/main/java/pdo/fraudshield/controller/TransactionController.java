@@ -22,7 +22,7 @@ public class TransactionController {
 
     @PostMapping
     public ResponseEntity<FraudAnalysisResponse> analyze(@Valid @RequestBody TransactionRequest request) {
-        Transaction transaction = transactionMapper.toDomain(request);
+        Transaction transaction = transactionMapper.toEntity(request);
         FraudAnalysis analysis = transactionService.processTransaction(transaction);
 
         return ResponseEntity.ok(transactionMapper.toResponse(analysis));

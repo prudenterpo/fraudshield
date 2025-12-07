@@ -6,10 +6,10 @@ import pdo.fraudshield.entity.Transaction;
 import pdo.fraudshield.dto.FraudAnalysisResponse;
 import pdo.fraudshield.dto.TransactionRequest;
 
-@Mapper(componentModel = "spring")
+@Mapper(config = GlobalMapperConfig.class)
 public interface TransactionMapper {
 
-    Transaction toDomain(TransactionRequest request);
+    Transaction toEntity(TransactionRequest request);
 
     FraudAnalysisResponse toResponse(FraudAnalysis analysis);
 }
